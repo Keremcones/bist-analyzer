@@ -245,24 +245,24 @@ const StockChart = ({ data, backtestResults, comparisonData, comparisonSymbol })
                 )}
             </div>
 
-            {/* Legend */}
-            {activeLegend && (
-                <div className="chart-legend glass-panel">
-                    <div className="legend-row">
-                        <span className="l-label">A:</span><span className="l-val">{formatN(activeLegend.open)}</span>
-                        <span className="l-label">Y:</span><span className="l-val">{formatN(activeLegend.high)}</span>
-                        <span className="l-label">D:</span><span className="l-val">{formatN(activeLegend.low)}</span>
-                        <span className="l-label">K:</span>
-                        <span className="l-val" style={{ color: activeLegend.close >= activeLegend.open ? '#10b981' : '#ef4444' }}>
-                            {formatN(activeLegend.close)}
-                        </span>
-                        <span className="l-label">H:</span><span className="l-val">{formatV(activeLegend.volume)}</span>
+            {/* Chart area + legend overlay */}
+            <div className="chart-area-wrap">
+                {activeLegend && (
+                    <div className="chart-legend glass-panel">
+                        <div className="legend-row">
+                            <span className="l-label">A:</span><span className="l-val">{formatN(activeLegend.open)}</span>
+                            <span className="l-label">Y:</span><span className="l-val">{formatN(activeLegend.high)}</span>
+                            <span className="l-label">D:</span><span className="l-val">{formatN(activeLegend.low)}</span>
+                            <span className="l-label">K:</span>
+                            <span className="l-val" style={{ color: activeLegend.close >= activeLegend.open ? '#10b981' : '#ef4444' }}>
+                                {formatN(activeLegend.close)}
+                            </span>
+                            <span className="l-label">H:</span><span className="l-val">{formatV(activeLegend.volume)}</span>
+                        </div>
                     </div>
-                </div>
-            )}
-
-            {/* Main Chart */}
-            <div ref={mainContainerRef} className="main-chart-area" />
+                )}
+                <div ref={mainContainerRef} className="main-chart-area" />
+            </div>
 
             {/* AlgoScore Panel */}
             {visible.score && algoScores.length > 0 && (

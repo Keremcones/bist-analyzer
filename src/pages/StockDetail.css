@@ -499,11 +499,16 @@
     margin-left: auto;
 }
 
+/* Chart area wrapper — legend positions inside this */
+.chart-area-wrap {
+    position: relative;
+    width: 100%;
+}
+
 /* Main Chart Area */
 .main-chart-area {
     width: 100%;
     min-height: 420px;
-    position: relative;
 }
 
 /* Score Panel */
@@ -1059,4 +1064,80 @@
 
 .optim-table tbody tr:hover td {
     background: rgba(148, 163, 184, 0.08);
+}
+
+/* ── Stock Alarm ─────────────────────────────────── */
+.stock-alarm-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+    padding: 0.35rem 0.7rem;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    border-radius: 8px;
+    background: rgba(245, 158, 11, 0.08);
+    color: #f59e0b;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+.stock-alarm-btn:hover { background: rgba(245, 158, 11, 0.15); }
+
+.stock-alarm-panel {
+    padding: 0.85rem 1rem;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.alarm-panel-hd {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.88rem;
+}
+
+.alarm-browser-note {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    padding: 0.4rem 0.6rem;
+    background: rgba(245, 158, 11, 0.07);
+    border-radius: 6px;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.alarm-form-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.alarm-dir-select {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 8px;
+    padding: 0.4rem 0.65rem;
+    font-size: 0.82rem;
+}
+
+.alarm-price-input {
+    flex: 1;
+    min-width: 180px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 8px;
+    padding: 0.4rem 0.65rem;
+    font-size: 0.82rem;
+    outline: none;
+}
+.alarm-price-input:focus { border-color: var(--accent-primary); }
+
+.alarm-save-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    white-space: nowrap;
 }

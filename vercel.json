@@ -1,5 +1,8 @@
 {
   "rewrites": [
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    { "source": "/api/yahoo/:path*",    "destination": "/api/proxy?target=yahoo&path=:path*" },
+    { "source": "/api/yahoo-v2/:path*", "destination": "/api/proxy?target=yahoo2&path=:path*" },
+    { "source": "/api/twelve/:path*",   "destination": "/api/proxy?target=twelve&path=:path*" },
+    { "source": "/((?!api/).*)",        "destination": "/index.html" }
   ]
 }

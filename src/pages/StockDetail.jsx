@@ -9,7 +9,7 @@ import StockLogo from '../components/ui/StockLogo';
 import { loadGlobalStrategy } from '../utils/strategyStorage';
 import {
     Loader2, TrendingUp, TrendingDown, Activity, CheckCircle,
-    Percent, Calendar, Download, GitCompare, X
+    Percent, Calendar, Download, GitCompare, X, Bell, Plus
 } from 'lucide-react';
 import './StockDetail.css';
 
@@ -50,6 +50,25 @@ const StockDetail = () => {
     const [backtestResults, setBacktestResults] = useState(null);
     const [isCalculating,   setIsCalculating]   = useState(false);
     const [exitOnSignal,    setExitOnSignal]    = useState(true);
+
+    // Alarm
+    const [showAlarmForm, setShowAlarmForm] = useState(false);
+    const [alarmPrice, setAlarmPrice] = useState('');
+    const [alarmDir, setAlarmDir] = useState('above');
+    const [alarmSaved, setAlarmSaved] = useState(false);
+
+    const ALARM_KEY = 'bist_price_alarms_v1';
+    const addStockAlarm = async () => {
+        const price = parseFloat(alarmPrice);
+        if (isNaN(price) || price <= 0) return;
+        if (Notification.permission === 'default') await Notification.requestPermission();
+        const existing = JSON.parse(localStorage.getItem(ALARM_KEY) || '[]');
+        const updated = [...existing, { id: Date.now(), symbol: symbol.replace('.IS', '').toUpperCase(), targetPrice: price, direction: alarmDir }];
+        localStorage.setItem(ALARM_KEY, JSON.stringify(updated));
+        setAlarmPrice('');
+        setAlarmSaved(true);
+        setTimeout(() => { setAlarmSaved(false); setShowAlarmForm(false); }, 1800);
+    };
 
     // Optimization
     const [showOptimization, setShowOptimization] = useState(false);
@@ -257,8 +276,47 @@ const StockDetail = () => {
                         {isPositive ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
                         <span>{formatCurrency(Math.abs(changeAmt))} ({formatPercent(Math.abs(changePct))})</span>
                     </div>
+                    <button
+                        className="stock-alarm-btn"
+                        onClick={() => setShowAlarmForm(p => !p)}
+                        title="Fiyat Alarmı Kur"
+                    >
+                        <Bell size={15} /> Alarm Kur
+                    </button>
                 </div>
             </div>
+
+            {showAlarmForm && (
+                <div className="stock-alarm-panel glass-panel animate-slide-down">
+                    <div className="alarm-panel-hd">
+                        <Bell size={14} />
+                        <strong>{cleanSymbol} için Fiyat Alarmı</strong>
+                        <button onClick={() => setShowAlarmForm(false)} style={{ marginLeft: 'auto' }}><X size={14} /></button>
+                    </div>
+                    <p className="alarm-browser-note">⚠️ Bu alarm yalnızca <strong>tarayıcı açıkken</strong> çalışır.</p>
+                    <div className="alarm-form-row">
+                        <select
+                            value={alarmDir}
+                            onChange={e => setAlarmDir(e.target.value)}
+                            className="alarm-dir-select"
+                        >
+                            <option value="above">↑ Üstüne çıkınca</option>
+                            <option value="below">↓ Altına düşünce</option>
+                        </select>
+                        <input
+                            type="number"
+                            className="alarm-price-input"
+                            placeholder={`Hedef fiyat (şu an: ${formatCurrency(currentPrice)})`}
+                            value={alarmPrice}
+                            onChange={e => setAlarmPrice(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && addStockAlarm()}
+                        />
+                        <button className="preset-btn alarm-save-btn" onClick={addStockAlarm}>
+                            {alarmSaved ? '✓ Kaydedildi' : <><Plus size={14} /> Kaydet</>}
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Stats Bar */}
             <div className="stock-stats-bar glass-panel animate-slide-up">
