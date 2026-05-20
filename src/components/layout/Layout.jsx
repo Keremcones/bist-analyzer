@@ -89,6 +89,10 @@ const Layout = ({ children }) => {
                 </nav>
 
                 <div className="sidebar-footer">
+                    <div className="rolin-credit">
+                        <strong>Rolin Long</strong>
+                        <span>Tarafından Tasarlandı</span>
+                    </div>
                     <button className="theme-toggle-btn" onClick={toggleTheme}>
                         {theme === 'dark' ? (
                             <><Sun size={20} /> <span className="toggle-text">Light Mode</span></>
