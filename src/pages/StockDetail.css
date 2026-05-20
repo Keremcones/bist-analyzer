@@ -1141,3 +1141,41 @@
     gap: 0.35rem;
     white-space: nowrap;
 }
+
+/* ── Strateji Alarm ──────────────────────────────── */
+.alarm-score-badge {
+    margin-left: auto;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+.score-buy     { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.4); }
+.score-sell    { background: rgba(239,68,68,0.15);  color: #ef4444; border: 1px solid rgba(239,68,68,0.4); }
+.score-neutral { background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-color); }
+
+.alarm-signal-btns {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.signal-btn {
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+.signal-btn.active-buy  { background: rgba(16,185,129,0.15); color: #10b981; border-color: rgba(16,185,129,0.5); }
+.signal-btn.active-sell { background: rgba(239,68,68,0.15);  color: #ef4444; border-color: rgba(239,68,68,0.5); }
+.signal-btn.active-both { background: rgba(167,139,250,0.15); color: #a78bfa; border-color: rgba(167,139,250,0.5); }
+
+.alarm-threshold-hint {
+    font-size: 0.78rem;
+    white-space: nowrap;
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchMultipleStocks, fetchStockData } from '../services/api';
+import { runAdvancedBacktest } from '../utils/advancedBacktest';
 import { formatCurrency, formatPercent } from '../utils/formatters';
 import {
     TrendingUp, TrendingDown, ArrowRight, Loader2, RefreshCcw, BarChart3,
@@ -147,6 +148,44 @@ const Dashboard = () => {
         }, 2 * 60 * 1000);
         return () => clearInterval(id);
     }, [alarms.length, checkAlarms]);
+
+    // Strateji alarmı periyodik kontrol — her 2 dakikada bir
+    useEffect(() => {
+        const STRATEGY_ALARM_KEY = 'bist_strategy_alarms_v1';
+        const check = async () => {
+            const strategyAlarms = JSON.parse(localStorage.getItem(STRATEGY_ALARM_KEY) || '[]');
+            if (!strategyAlarms.length) return;
+
+            for (const alarm of strategyAlarms) {
+                try {
+                    const res = await fetchStockData(alarm.symbol, '3mo', alarm.timeframe || '1d');
+                    if (!res?.data?.length) continue;
+                    const bt = runAdvancedBacktest(res.data, alarm.buyThreshold, alarm.sellThreshold, 1, 3, true, 'long');
+                    const lastScore = bt?.algoScores?.at(-1)?.score;
+                    if (lastScore == null) continue;
+
+                    const isBuySignal  = lastScore >= alarm.buyThreshold;
+                    const isSellSignal = lastScore <= alarm.sellThreshold;
+                    const shouldFire   =
+                        (alarm.signalType === 'buy'  && isBuySignal)  ||
+                        (alarm.signalType === 'sell' && isSellSignal) ||
+                        (alarm.signalType === 'both' && (isBuySignal || isSellSignal));
+
+                    if (shouldFire && Notification.permission === 'granted') {
+                        const label = isBuySignal ? '🟢 AL' : '🔴 SAT';
+                        new Notification(`${label} Sinyali — ${alarm.symbol}`, {
+                            body: `${alarm.symbol} strateji skoru ${lastScore > 0 ? '+' : ''}${lastScore.toFixed(1)} (${alarm.timeframe || '1d'})`,
+                            icon: '/logo.svg',
+                        });
+                    }
+                } catch { /* sessiz hata */ }
+            }
+        };
+
+        check(); // ilk yüklemede hemen kontrol et
+        const id = setInterval(check, 2 * 60 * 1000);
+        return () => clearInterval(id);
+    }, []);
 
     const addAlarm = async () => {
         const sym = newAlarmSymbol.trim().toUpperCase();

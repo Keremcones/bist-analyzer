@@ -51,23 +51,27 @@ const StockDetail = () => {
     const [isCalculating,   setIsCalculating]   = useState(false);
     const [exitOnSignal,    setExitOnSignal]    = useState(true);
 
-    // Alarm
-    const [showAlarmForm, setShowAlarmForm] = useState(false);
-    const [alarmPrice, setAlarmPrice] = useState('');
-    const [alarmDir, setAlarmDir] = useState('above');
+    // Strateji Alarmı
+    const [alarmSignal, setAlarmSignal] = useState('buy');
     const [alarmSaved, setAlarmSaved] = useState(false);
 
-    const ALARM_KEY = 'bist_price_alarms_v1';
-    const addStockAlarm = async () => {
-        const price = parseFloat(alarmPrice);
-        if (isNaN(price) || price <= 0) return;
+    const STRATEGY_ALARM_KEY = 'bist_strategy_alarms_v1';
+    const addStrategyAlarm = async () => {
         if (Notification.permission === 'default') await Notification.requestPermission();
-        const existing = JSON.parse(localStorage.getItem(ALARM_KEY) || '[]');
-        const updated = [...existing, { id: Date.now(), symbol: symbol.replace('.IS', '').toUpperCase(), targetPrice: price, direction: alarmDir }];
-        localStorage.setItem(ALARM_KEY, JSON.stringify(updated));
-        setAlarmPrice('');
+        const existing = JSON.parse(localStorage.getItem(STRATEGY_ALARM_KEY) || '[]');
+        const sym = symbol.replace('.IS', '').toUpperCase();
+        const filtered = existing.filter(a => !(a.symbol === sym && a.signalType === alarmSignal));
+        const updated = [...filtered, {
+            id: Date.now(),
+            symbol: sym,
+            signalType: alarmSignal,
+            timeframe,
+            buyThreshold,
+            sellThreshold,
+        }];
+        localStorage.setItem(STRATEGY_ALARM_KEY, JSON.stringify(updated));
         setAlarmSaved(true);
-        setTimeout(() => { setAlarmSaved(false); setShowAlarmForm(false); }, 1800);
+        setTimeout(() => setAlarmSaved(false), 2000);
     };
 
     // Optimization
@@ -364,35 +368,52 @@ const StockDetail = () => {
                 )}
             </div>
 
-            {/* Alarm Panel */}
-            <div className="stock-alarm-panel glass-panel">
-                <div className="alarm-panel-hd">
-                    <Bell size={14} />
-                    <strong>{cleanSymbol} için Fiyat Alarmı</strong>
-                </div>
-                <p className="alarm-browser-note">⚠️ Bu alarm yalnızca <strong>tarayıcı açıkken</strong> çalışır.</p>
-                <div className="alarm-form-row">
-                    <select
-                        value={alarmDir}
-                        onChange={e => setAlarmDir(e.target.value)}
-                        className="alarm-dir-select"
-                    >
-                        <option value="above">↑ Üstüne çıkınca</option>
-                        <option value="below">↓ Altına düşünce</option>
-                    </select>
-                    <input
-                        type="number"
-                        className="alarm-price-input"
-                        placeholder={`Hedef fiyat (şu an: ${formatCurrency(currentPrice)})`}
-                        value={alarmPrice}
-                        onChange={e => setAlarmPrice(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && addStockAlarm()}
-                    />
-                    <button className="preset-btn alarm-save-btn" onClick={addStockAlarm}>
-                        {alarmSaved ? '✓ Kaydedildi' : <><Plus size={14} /> Alarm Kur</>}
-                    </button>
-                </div>
-            </div>
+            {/* Strateji Alarm Paneli */}
+            {(() => {
+                const currentScore = backtestResults?.algoScores?.at(-1)?.score ?? null;
+                return (
+                    <div className="stock-alarm-panel glass-panel">
+                        <div className="alarm-panel-hd">
+                            <Bell size={14} />
+                            <strong>{cleanSymbol} — Strateji Alarmı</strong>
+                            {currentScore !== null && (
+                                <span className={`alarm-score-badge ${currentScore >= buyThreshold ? 'score-buy' : currentScore <= sellThreshold ? 'score-sell' : 'score-neutral'}`}>
+                                    Güncel skor: {currentScore > 0 ? '+' : ''}{currentScore.toFixed(1)}
+                                </span>
+                            )}
+                        </div>
+                        <p className="alarm-browser-note">⚠️ Alarm yalnızca <strong>tarayıcı açıkken</strong> her 2 dakikada kontrol edilir.</p>
+                        <div className="alarm-form-row">
+                            <div className="alarm-signal-btns">
+                                <button
+                                    className={`signal-btn ${alarmSignal === 'buy' ? 'active-buy' : ''}`}
+                                    onClick={() => setAlarmSignal('buy')}
+                                >
+                                    🟢 Al Sinyali
+                                </button>
+                                <button
+                                    className={`signal-btn ${alarmSignal === 'sell' ? 'active-sell' : ''}`}
+                                    onClick={() => setAlarmSignal('sell')}
+                                >
+                                    🔴 Sat Sinyali
+                                </button>
+                                <button
+                                    className={`signal-btn ${alarmSignal === 'both' ? 'active-both' : ''}`}
+                                    onClick={() => setAlarmSignal('both')}
+                                >
+                                    ⚡ Her İkisi
+                                </button>
+                            </div>
+                            <span className="alarm-threshold-hint text-muted">
+                                Al ≥ {buyThreshold} · Sat ≤ {sellThreshold} · {timeframe}
+                            </span>
+                            <button className="preset-btn alarm-save-btn" onClick={addStrategyAlarm}>
+                                {alarmSaved ? '✓ Kaydedildi' : <><Bell size={14} /> Alarm Kur</>}
+                            </button>
+                        </div>
+                    </div>
+                );
+            })()}
 
             {/* Optimization Panel */}
             <div className="glass-panel optim-panel">
