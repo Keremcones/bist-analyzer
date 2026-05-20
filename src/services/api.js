@@ -128,7 +128,9 @@ const parseYahooResponse = (data, symbol, interval) => {
 };
 
 const fetchWithYahooRotation = async (symbol, range, interval) => {
-    const formattedSymbol = symbol.includes('.IS') ? symbol.toUpperCase() : `${symbol.toUpperCase()}.IS`;
+    // Forex (=X), emtia (=F), endeks gibi özel semboller .IS eki almaz
+    const isBistEquity = !symbol.includes('=') && !symbol.includes('-') && !symbol.includes('.');
+    const formattedSymbol = isBistEquity ? `${symbol.toUpperCase()}.IS` : symbol.toUpperCase();
 
     for (const baseUrl of YAHOO_ENDPOINTS) {
         try {
