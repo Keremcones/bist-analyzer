@@ -1,0 +1,402 @@
+/* ── Karsilastirma.css ─────────────────────────────────────── */
+
+/* Page wrapper */
+.karsilastirma-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-bottom: 2rem;
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+.kars-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+    background: linear-gradient(
+        135deg,
+        var(--glass-bg),
+        color-mix(in srgb, var(--accent-primary) 6%, var(--glass-bg))
+    );
+}
+
+.kars-header-text {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.kars-header-icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--accent-primary) 14%, transparent);
+    color: var(--accent-primary);
+    flex-shrink: 0;
+}
+
+.kars-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1.2;
+    font-family: var(--font-heading);
+}
+
+.kars-subtitle {
+    font-size: 0.8rem;
+    margin: 0;
+    margin-top: 0.2rem;
+}
+
+.kars-header-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--text-muted);
+}
+
+/* ── Selector Bar ─────────────────────────────────────────────── */
+.kars-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    flex-wrap: wrap;
+}
+
+.kars-select {
+    min-width: 220px;
+    padding: 0.5rem 0.75rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.65rem center;
+    padding-right: 2rem;
+}
+
+.kars-select:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.kars-select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Add button */
+.kars-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    background: var(--accent-primary);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.kars-add-btn:hover:not(:disabled) {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+.kars-add-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Chips */
+.kars-chips {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.kars-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--chip-color, var(--accent-primary));
+    background: color-mix(in srgb, var(--chip-color, var(--accent-primary)) 12%, transparent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    transition: background 0.15s ease;
+    user-select: none;
+}
+
+.kars-chip:hover {
+    background: color-mix(in srgb, var(--chip-color, var(--accent-primary)) 20%, transparent);
+}
+
+.chip-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--chip-color, var(--accent-primary));
+    flex-shrink: 0;
+}
+
+.chip-logo {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.chip-label {
+    letter-spacing: 0.02em;
+}
+
+.chip-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: none;
+    background: color-mix(in srgb, var(--chip-color, var(--accent-primary)) 20%, transparent);
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.15s ease, color 0.15s ease;
+    flex-shrink: 0;
+}
+
+.chip-remove:hover {
+    background: color-mix(in srgb, var(--chip-color, var(--accent-primary)) 40%, transparent);
+    color: var(--text-primary);
+}
+
+.kars-limit-note {
+    font-size: 0.78rem;
+    font-style: italic;
+}
+
+/* ── Chart wrapper ─────────────────────────────────────────────── */
+.kars-chart-wrap {
+    padding: 0.75rem;
+    position: relative;
+    min-height: 460px;
+}
+
+.kars-chart-inner {
+    width: 100%;
+    height: 420px;
+}
+
+.kars-chart-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    z-index: 10;
+    border-radius: 22px;
+    background: color-mix(in srgb, var(--glass-bg) 80%, transparent);
+    backdrop-filter: blur(6px);
+}
+
+.kars-error-note {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--danger) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--danger) 25%, transparent);
+    color: var(--danger);
+    margin-bottom: 0.5rem;
+}
+
+/* ── Empty state ─────────────────────────────────────────────── */
+.kars-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 3.5rem 2rem;
+    text-align: center;
+    min-height: 260px;
+}
+
+.kars-empty-icon {
+    color: var(--text-muted);
+    opacity: 0.45;
+}
+
+.kars-empty-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* ── Metrics table ─────────────────────────────────────────────── */
+.kars-metrics {
+    padding: 1.25rem;
+}
+
+.kars-metrics-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    font-family: var(--font-heading);
+}
+
+.kars-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.metrics-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.metrics-table th,
+.metrics-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+    white-space: nowrap;
+}
+
+.metrics-table thead th {
+    font-weight: 700;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.metric-row-header {
+    min-width: 160px;
+    color: var(--text-muted) !important;
+    font-size: 0.78rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+}
+
+.metric-header-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.metric-label-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.metric-row-icon {
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.metrics-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.metrics-table tbody tr:hover td {
+    background: color-mix(in srgb, var(--accent-primary) 4%, transparent);
+}
+
+/* spin animation reuse */
+.spin-icon {
+    animation: spin 1s linear infinite;
+    color: var(--accent-primary);
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* ── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .kars-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .kars-selector {
+        flex-wrap: wrap;
+    }
+
+    .kars-select {
+        min-width: 100%;
+        flex: 1 1 100%;
+    }
+
+    .kars-add-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .kars-chips {
+        width: 100%;
+    }
+
+    .kars-chart-wrap {
+        min-height: 360px;
+    }
+
+    .kars-chart-inner {
+        height: 300px;
+    }
+
+    .metrics-table th,
+    .metrics-table td {
+        padding: 0.55rem 0.65rem;
+        font-size: 0.8rem;
+    }
+
+    .metric-row-header {
+        min-width: 120px;
+    }
+}

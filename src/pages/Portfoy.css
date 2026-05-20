@@ -1,0 +1,519 @@
+/* ============================================================
+   Portfoy.css — BIST Portfolio Tracking Page
+   ============================================================ */
+
+/* ── Page Layout ─────────────────────────────────────────── */
+.portfoy-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-bottom: 2rem;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.portfoy-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    background:
+        linear-gradient(145deg, rgba(15, 118, 110, 0.24), rgba(8, 145, 178, 0.16)),
+        var(--glass-bg);
+    border: 1px solid rgba(45, 212, 191, 0.24);
+}
+
+.portfoy-title {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.2rem;
+    display: flex;
+    align-items: center;
+}
+
+.portfoy-subtitle {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.portfoy-header-actions {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* ── Header Buttons ──────────────────────────────────────── */
+.pf-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    background: var(--accent-primary);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+}
+.pf-add-btn:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+.pf-add-btn:active {
+    transform: translateY(0);
+}
+
+.pf-refresh-btn,
+.pf-export-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.9rem;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.84rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.pf-refresh-btn:hover,
+.pf-export-btn:hover {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border-color: var(--accent-primary);
+}
+.pf-refresh-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Spin animation for loading state */
+@keyframes pf-spin {
+    to { transform: rotate(360deg); }
+}
+.spin {
+    animation: pf-spin 0.8s linear infinite;
+}
+
+/* ── Add Form ─────────────────────────────────────────────── */
+.pf-form {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.pf-form-title {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.pf-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+.pf-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.pf-notes {
+    grid-column: span 2;
+}
+
+.pf-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.pf-input {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.55rem 0.75rem;
+    color: var(--text-primary);
+    font-size: 0.88rem;
+    font-family: var(--font-sans);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+.pf-input:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+.pf-input option {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+.pf-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.pf-cancel-btn {
+    padding: 0.5rem 1rem;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+.pf-cancel-btn:hover {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+.pf-confirm-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.5rem 1rem;
+    background: var(--accent-primary);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+.pf-confirm-btn:hover {
+    opacity: 0.88;
+}
+.pf-confirm-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* ── Summary Grid ─────────────────────────────────────────── */
+.pf-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.pf-summary-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 1rem 1.25rem;
+}
+
+.card-pos {
+    border-color: rgba(16, 185, 129, 0.25) !important;
+    background:
+        linear-gradient(135deg, rgba(16, 185, 129, 0.06), transparent),
+        var(--glass-bg);
+}
+
+.card-neg {
+    border-color: rgba(239, 68, 68, 0.25) !important;
+    background:
+        linear-gradient(135deg, rgba(239, 68, 68, 0.06), transparent),
+        var(--glass-bg);
+}
+
+.pf-card-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.pf-card-value {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.pf-card-sub {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+/* ── Positions Table ─────────────────────────────────────── */
+.pf-table-panel {
+    padding: 0;
+    overflow: hidden;
+}
+
+.pf-table-header {
+    padding: 1rem 1.25rem 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.pf-section-title {
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.pf-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.pf-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.pf-table th {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.pf-table td {
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+.pf-table tr:last-child td {
+    border-bottom: none;
+}
+
+.num-col {
+    text-align: right !important;
+}
+
+.pf-table th.num-col {
+    text-align: right;
+}
+
+.pf-company-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.pf-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.pf-sym {
+    font-weight: 700;
+    font-size: 0.87rem;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.pf-name {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.2;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pos-profit td {
+    background: rgba(16, 185, 129, 0.04);
+}
+
+.pos-loss td {
+    background: rgba(239, 68, 68, 0.04);
+}
+
+.pf-table tr:hover td {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.pf-remove-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+.pf-remove-btn:hover {
+    color: var(--danger);
+    background: var(--danger-bg, rgba(239, 68, 68, 0.1));
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* ── Sector Allocation ───────────────────────────────────── */
+.pf-sector-panel {
+    padding: 1.25rem;
+}
+
+.pf-sector-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 0.75rem;
+}
+
+.pf-sector-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 52px 120px;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.pf-sector-name {
+    font-size: 0.83rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pf-sector-bar-track {
+    height: 8px;
+    border-radius: 999px;
+    background: var(--border-color);
+    overflow: hidden;
+}
+
+.pf-sector-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #0d9488, #0891b2);
+    transition: width 0.4s ease;
+}
+
+.pf-sector-pct {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.pf-sector-value {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+/* ── Empty State ─────────────────────────────────────────── */
+.pf-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+.pf-empty-title {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.25rem;
+}
+
+.pf-empty-sub {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin: 0;
+    max-width: 340px;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .pf-summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .pf-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pf-notes {
+        grid-column: span 1;
+    }
+
+    .hide-sm {
+        display: none;
+    }
+
+    .pf-sector-row {
+        grid-template-columns: 100px 1fr 44px;
+    }
+    .pf-sector-value {
+        display: none;
+    }
+
+    .portfoy-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .portfoy-header-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .pf-summary-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .pf-card-value {
+        font-size: 1rem;
+    }
+
+    .pf-table td,
+    .pf-table th {
+        padding: 0.65rem 0.75rem;
+    }
+}
