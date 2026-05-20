@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchMultipleStocks, fetchStockData } from '../services/api';
 import { formatCurrency, formatPercent } from '../utils/formatters';
@@ -60,6 +60,9 @@ const Dashboard = () => {
     const [newAlarmPrice, setNewAlarmPrice] = useState('');
     const [newAlarmDir, setNewAlarmDir] = useState('above');
     const [triggeredAlarms, setTriggeredAlarms] = useState([]);
+    const [notifPermission, setNotifPermission] = useState(Notification.permission);
+    const alarmsRef = useRef(alarms);
+    useEffect(() => { alarmsRef.current = alarms; }, [alarms]);
 
     // Clock tick
     useEffect(() => {
@@ -102,25 +105,60 @@ const Dashboard = () => {
         fetchMacro();
     }, []);
 
-    // Check alarms when stocks load
-    useEffect(() => {
-        if (!stocks.length || !alarms.length) return;
+    const checkAlarms = useCallback((currentStocks, currentAlarms) => {
+        if (!currentStocks.length || !currentAlarms.length) return;
         const fired = [];
-        alarms.forEach(alarm => {
-            const stock = stocks.find(s => s.symbol === alarm.symbol);
+        currentAlarms.forEach(alarm => {
+            const stock = currentStocks.find(s =>
+                s.symbol === alarm.symbol || s.symbol === `${alarm.symbol}.IS`
+            );
             if (!stock) return;
             const hit = alarm.direction === 'above'
                 ? stock.price >= alarm.targetPrice
                 : stock.price <= alarm.targetPrice;
-            if (hit) fired.push({ ...alarm, currentPrice: stock.price });
+            if (hit) {
+                fired.push({ ...alarm, currentPrice: stock.price });
+                if (Notification.permission === 'granted') {
+                    new Notification(`🔔 ${alarm.symbol} Fiyat Alarmı`, {
+                        body: `${alarm.symbol} ${alarm.direction === 'above' ? '↑' : '↓'} ${alarm.targetPrice.toLocaleString('tr-TR')} ₺ hedefine ulaştı! Anlık: ${stock.price.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} ₺`,
+                        icon: '/logo.svg',
+                    });
+                }
+            }
         });
         if (fired.length) setTriggeredAlarms(fired);
-    }, [stocks, alarms]);
+    }, []);
 
-    const addAlarm = () => {
+    // Check alarms when stocks load
+    useEffect(() => {
+        checkAlarms(stocks, alarms);
+    }, [stocks, alarms, checkAlarms]);
+
+    // Periyodik alarm kontrolü — her 2 dakikada bir fiyat çek
+    useEffect(() => {
+        if (!alarms.length) return;
+        const id = setInterval(async () => {
+            if (!alarmsRef.current.length) return;
+            try {
+                const symbols = [...new Set(alarmsRef.current.map(a => a.symbol))];
+                const fresh = await fetchMultipleStocks(symbols);
+                checkAlarms(fresh, alarmsRef.current);
+            } catch { /* sessiz hata */ }
+        }, 2 * 60 * 1000);
+        return () => clearInterval(id);
+    }, [alarms.length, checkAlarms]);
+
+    const addAlarm = async () => {
         const sym = newAlarmSymbol.trim().toUpperCase();
         const price = parseFloat(newAlarmPrice);
         if (!sym || isNaN(price) || price <= 0) return;
+
+        // Bildirim izni iste
+        if (Notification.permission === 'default') {
+            const perm = await Notification.requestPermission();
+            setNotifPermission(perm);
+        }
+
         const updated = [...alarms, { id: Date.now(), symbol: sym, targetPrice: price, direction: newAlarmDir }];
         setAlarms(updated);
         saveAlarms(updated);
@@ -224,6 +262,20 @@ const Dashboard = () => {
                     <div className="alarm-panel-header">
                         <h3><Bell size={16} /> Fiyat Alarmları</h3>
                         <button onClick={() => setShowAlarmPanel(false)}><X size={16} /></button>
+                    </div>
+
+                    <div className="alarm-browser-warning">
+                        <span>⚠️</span>
+                        <span>Bu alarmlar <strong>yalnızca tarayıcı açıkken</strong> çalışır. Tarayıcı veya sekme kapatılırsa bildirim gelmez.</span>
+                        {notifPermission === 'denied' && (
+                            <span className="notif-blocked">🔕 Bildirimler engellendi — tarayıcı ayarlarından izin ver.</span>
+                        )}
+                        {notifPermission === 'default' && (
+                            <span className="notif-hint">Alarm ekleyince bildirim izni istenecek.</span>
+                        )}
+                        {notifPermission === 'granted' && (
+                            <span className="notif-ok">✓ Bildirimler aktif</span>
+                        )}
                     </div>
                     <div className="alarm-add-row">
                         <select
