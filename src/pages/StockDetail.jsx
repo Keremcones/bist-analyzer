@@ -276,47 +276,8 @@ const StockDetail = () => {
                         {isPositive ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
                         <span>{formatCurrency(Math.abs(changeAmt))} ({formatPercent(Math.abs(changePct))})</span>
                     </div>
-                    <button
-                        className="stock-alarm-btn"
-                        onClick={() => setShowAlarmForm(p => !p)}
-                        title="Fiyat Alarmı Kur"
-                    >
-                        <Bell size={15} /> Alarm Kur
-                    </button>
                 </div>
             </div>
-
-            {showAlarmForm && (
-                <div className="stock-alarm-panel glass-panel animate-slide-down">
-                    <div className="alarm-panel-hd">
-                        <Bell size={14} />
-                        <strong>{cleanSymbol} için Fiyat Alarmı</strong>
-                        <button onClick={() => setShowAlarmForm(false)} style={{ marginLeft: 'auto' }}><X size={14} /></button>
-                    </div>
-                    <p className="alarm-browser-note">⚠️ Bu alarm yalnızca <strong>tarayıcı açıkken</strong> çalışır.</p>
-                    <div className="alarm-form-row">
-                        <select
-                            value={alarmDir}
-                            onChange={e => setAlarmDir(e.target.value)}
-                            className="alarm-dir-select"
-                        >
-                            <option value="above">↑ Üstüne çıkınca</option>
-                            <option value="below">↓ Altına düşünce</option>
-                        </select>
-                        <input
-                            type="number"
-                            className="alarm-price-input"
-                            placeholder={`Hedef fiyat (şu an: ${formatCurrency(currentPrice)})`}
-                            value={alarmPrice}
-                            onChange={e => setAlarmPrice(e.target.value)}
-                            onKeyDown={e => e.key === 'Enter' && addStockAlarm()}
-                        />
-                        <button className="preset-btn alarm-save-btn" onClick={addStockAlarm}>
-                            {alarmSaved ? '✓ Kaydedildi' : <><Plus size={14} /> Kaydet</>}
-                        </button>
-                    </div>
-                </div>
-            )}
 
             {/* Stats Bar */}
             <div className="stock-stats-bar glass-panel animate-slide-up">
@@ -399,6 +360,93 @@ const StockDetail = () => {
                                 {formatPercent(mainReturn - compReturn)}
                             </span>
                         </div>
+                    </div>
+                )}
+            </div>
+
+            {/* Alarm Panel */}
+            <div className="stock-alarm-panel glass-panel">
+                <div className="alarm-panel-hd">
+                    <Bell size={14} />
+                    <strong>{cleanSymbol} için Fiyat Alarmı</strong>
+                </div>
+                <p className="alarm-browser-note">⚠️ Bu alarm yalnızca <strong>tarayıcı açıkken</strong> çalışır.</p>
+                <div className="alarm-form-row">
+                    <select
+                        value={alarmDir}
+                        onChange={e => setAlarmDir(e.target.value)}
+                        className="alarm-dir-select"
+                    >
+                        <option value="above">↑ Üstüne çıkınca</option>
+                        <option value="below">↓ Altına düşünce</option>
+                    </select>
+                    <input
+                        type="number"
+                        className="alarm-price-input"
+                        placeholder={`Hedef fiyat (şu an: ${formatCurrency(currentPrice)})`}
+                        value={alarmPrice}
+                        onChange={e => setAlarmPrice(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && addStockAlarm()}
+                    />
+                    <button className="preset-btn alarm-save-btn" onClick={addStockAlarm}>
+                        {alarmSaved ? '✓ Kaydedildi' : <><Plus size={14} /> Alarm Kur</>}
+                    </button>
+                </div>
+            </div>
+
+            {/* Optimization Panel */}
+            <div className="glass-panel optim-panel">
+                <div className="optim-header" onClick={() => setShowOptimization(p => !p)}>
+                    <Activity size={16} />
+                    <strong>TP/SL Optimizasyonu</strong>
+                    <span className="text-muted" style={{ fontSize: '0.78rem' }}>
+                        20 kombinasyon · en iyi 10 sonuç
+                    </span>
+                    <button className="optim-toggle-btn" style={{ marginLeft: 'auto' }}>
+                        {showOptimization ? <X size={14} /> : 'Göster'}
+                    </button>
+                </div>
+                {showOptimization && (
+                    <div className="optim-body">
+                        <button
+                            className="preset-btn optim-run-btn"
+                            onClick={runOptimization}
+                            disabled={isOptimizing}
+                        >
+                            {isOptimizing ? <><Loader2 size={14} className="spin-icon" /> Hesaplanıyor…</> : '▶ Optimizasyonu Çalıştır'}
+                        </button>
+                        {optimResults.length > 0 && (
+                            <div className="optim-table-wrap">
+                                <table className="optim-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>TP %</th>
+                                            <th>SL %</th>
+                                            <th>Strateji Getiri</th>
+                                            <th>Win Rate</th>
+                                            <th>İşlem</th>
+                                            <th>Max DD</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {optimResults.map((r, i) => (
+                                            <tr key={i} className={i === 0 ? 'optim-best-row' : ''}>
+                                                <td>{i === 0 ? '🏆' : i + 1}</td>
+                                                <td><strong>{r.tp}%</strong></td>
+                                                <td><strong>{r.sl}%</strong></td>
+                                                <td className={r.totalReturn >= 0 ? 'positive-text' : 'negative-text'}>
+                                                    {r.totalReturn >= 0 ? '+' : ''}{r.totalReturn.toFixed(1)}%
+                                                </td>
+                                                <td>{r.winRate.toFixed(1)}%</td>
+                                                <td>{r.totalTrades}</td>
+                                                <td className="negative-text">{r.maxDrawdown.toFixed(1)}%</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
@@ -551,62 +599,6 @@ const StockDetail = () => {
                 )}
             </div>
 
-            {/* Optimization Panel */}
-            <div className="glass-panel optim-panel">
-                <div className="optim-header" onClick={() => setShowOptimization(p => !p)}>
-                    <Activity size={16} />
-                    <strong>TP/SL Optimizasyonu</strong>
-                    <span className="text-muted" style={{ fontSize: '0.78rem' }}>
-                        20 kombinasyon · en iyi 10 sonuç
-                    </span>
-                    <button className="optim-toggle-btn" style={{ marginLeft: 'auto' }}>
-                        {showOptimization ? <X size={14} /> : 'Göster'}
-                    </button>
-                </div>
-                {showOptimization && (
-                    <div className="optim-body">
-                        <button
-                            className="preset-btn optim-run-btn"
-                            onClick={runOptimization}
-                            disabled={isOptimizing}
-                        >
-                            {isOptimizing ? <><Loader2 size={14} className="spin-icon" /> Hesaplanıyor…</> : '▶ Optimizasyonu Çalıştır'}
-                        </button>
-                        {optimResults.length > 0 && (
-                            <div className="optim-table-wrap">
-                                <table className="optim-table">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>TP %</th>
-                                            <th>SL %</th>
-                                            <th>Strateji Getiri</th>
-                                            <th>Win Rate</th>
-                                            <th>İşlem</th>
-                                            <th>Max DD</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {optimResults.map((r, i) => (
-                                            <tr key={i} className={i === 0 ? 'optim-best-row' : ''}>
-                                                <td>{i === 0 ? '🏆' : i + 1}</td>
-                                                <td><strong>{r.tp}%</strong></td>
-                                                <td><strong>{r.sl}%</strong></td>
-                                                <td className={r.totalReturn >= 0 ? 'positive-text' : 'negative-text'}>
-                                                    {r.totalReturn >= 0 ? '+' : ''}{r.totalReturn.toFixed(1)}%
-                                                </td>
-                                                <td>{r.winRate.toFixed(1)}%</td>
-                                                <td>{r.totalTrades}</td>
-                                                <td className="negative-text">{r.maxDrawdown.toFixed(1)}%</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
-                    </div>
-                )}
-            </div>
         </div>
     );
 };
