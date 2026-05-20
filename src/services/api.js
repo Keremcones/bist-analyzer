@@ -86,8 +86,12 @@ const parseYahooResponse = (data, symbol, interval) => {
     const meta = result.meta;
     const TR_OFFSET_S = 3 * 3600;
 
+    const intervalSnap = { '15m': 900, '30m': 1800, '1h': 3600, '4h': 14400 };
+    const snap = intervalSnap[interval] || 0;
+
     const formattedData = timestamps.map((time, i) => {
-        const adjustedTime = time + TR_OFFSET_S;
+        const snappedTime = snap ? Math.floor(time / snap) * snap : time;
+        const adjustedTime = snappedTime + TR_OFFSET_S;
         let timeValue = adjustedTime;
         if (interval === '1d') {
             const date = new Date(adjustedTime * 1000);
